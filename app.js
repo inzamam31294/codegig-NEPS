@@ -1,11 +1,16 @@
 const express = require('express')
-const exhbs = require('express-handlebars')
+const exphbs = require('express-handlebars')
 const bodyParser = require('body-parser')
 const path = require('path')
 const routes = require('./routes/gigs')
 const db = require('./config/database')
 
 const app = express()
+
+app.engine('handlebars', exphbs({ defaultLayout: 'main' }))
+app.set('view engine', 'handlebars')
+
+app.use(express.static(path.join(__dirname, 'public')))
 
 db.authenticate()
   .then(() => {
@@ -17,7 +22,7 @@ db.authenticate()
 
 const PORT = process.env.PORT || 3000
 
-app.get('/', (req, res) => res.send('hello everyone!'))
+app.get('/', (req, res) => res.render('index', { layout: 'landing' }))
 
 app.use('/gigs', routes)
 
